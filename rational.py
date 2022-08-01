@@ -1,24 +1,13 @@
 
-import re
-from fractions import Fraction
- 
- 
-if __name__ == '__main__':
-    prompt = "Введите пример:"
-    while True:
-        
-        match = re.match(r"^\s*(?P<first>-?\d+)\s*(?P<operator>[+\-*/])\s*(?P<second>-?\d+)\s*$", input(prompt))
-        if not match:
-            raise ValueError("Некорректное выражение")
-        action = match.group("operator")
-       
-        if match.group("operator") == r"/":
-            sup = "⁰¹²³⁴⁵⁶⁷⁸⁹"
-            sub = "₀₁₂₃₄₅₆₇₈₉"
-            first, second = map(int, match.group("first", "second"))
-            div, mod = divmod(first, second)
-            fraction = Fraction(mod, second)
-            print(*filter(None, (div, "⁄".join((sup[fraction.numerator], sub[fraction.denominator])))))
-        else:
-            print(eval(action.join(match.group("first", "second"))))
-        
+class RationalFraction:
+    def __init__(self, numerator_or_string, denominator=1):
+        if isinstance(numerator_or_string, str):
+            match = re.findall(r'^(-?\d+)/(\d+)$', numerator_or_string)
+            if not match:
+                raise ValueError('error')
+            numerator_or_string, denominator = match[0]
+        self.numerator = int(numerator_or_string)
+        self.denominator = int(denominator)
+        if self.denominator == 0:
+            raise ValueError('Denominator is 0')
+        self.reduce()
